@@ -1,0 +1,279 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f172a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>India Fund Tracker</title><script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script><style>:root{color-scheme:light;--bg:#f0f4f8;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--primary:#1a56db;--primary-light:#ebf0ff;--green:#0d9488;--green-light:#f0fdfa;--red:#dc2626;--red-light:#fef2f2;--gold:#d97706;--gold-light:#fffbeb;--text:#1e293b;--text2:#64748b;--text3:#94a3b8;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);--shadow-lg:0 4px 24px rgba(0,0,0,.12)}*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}.header{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px}.hlogo{width:34px;height:34px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}.htitle{font-size:19px;font-weight:700}.hsub{font-size:11px;color:rgba(255,255,255,.5);margin-top:1px}.hbadge{background:rgba(59,130,246,.25);border:1px solid rgba(59,130,246,.4);color:#93c5fd;font-size:11px;padding:3px 10px;border-radius:20px;margin-left:auto}.tabs{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow-x:auto}.tab{padding:13px 18px;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}.tab:hover{color:var(--primary)}.tab.active{color:var(--primary);border-bottom-color:var(--primary)}.content{max-width:1100px;margin:0 auto;padding:20px}.section{display:none}.section.active{display:block}.sh{margin-bottom:16px}.sh h2{font-size:20px;font-weight:700}.sh p{font-size:13px;color:var(--text2);margin-top:3px}.sh-note{display:inline-block;background:var(--primary-light);color:var(--primary);font-size:11px;padding:3px 10px;border-radius:20px;margin-top:6px}.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.filter-btn{padding:5px 14px;border-radius:20px;font-size:12px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s}.filter-btn:hover,.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}.sort-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}.sort-lbl{font-size:12px;color:var(--text2);font-weight:500}.sort-btn{padding:5px 14px;border-radius:20px;font-size:12px;border:1px solid var(--primary);background:var(--surface);color:var(--primary);cursor:pointer;transition:all .15s;font-weight:500}.sort-btn:hover,.sort-btn.active{background:var(--primary);color:#fff}.card{background:var(--surface);border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}.fund-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;gap:10px}.fund-row:last-child{border-bottom:none}.fund-row:hover{background:var(--surface2)}.fund-row.active{background:var(--primary-light);border-left:3px solid var(--primary)}.rank{width:26px;height:26px;background:var(--bg);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text2);flex-shrink:0}.rank.top3{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff}.fund-info{flex:1;min-width:0}.fund-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fund-meta{font-size:11px;color:var(--text2);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:500}.badge.equity{background:#dbeafe;color:#1d4ed8}.badge.debt{background:#d1fae5;color:#065f46}.badge.hybrid{background:#fef3c7;color:#92400e}.badge.index{background:#ede9fe;color:#5b21b6}.returns{display:flex;gap:12px;flex-shrink:0;text-align:right}.ret-val{font-size:14px;font-weight:700}.ret-val.pos{color:var(--green)}.ret-val.neg{color:var(--red)}.ret-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}.inline-detail{border-top:1px solid var(--border)}.det-hd{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;padding:18px 20px}.hs{font-size:12px;color:rgba(255,255,255,.6)}.det-nm{font-size:16px;font-weight:700;margin:6px 0 4px}.det-nav{font-size:24px;font-weight:800;margin-top:6px}.score-bar{height:6px;background:var(--border);margin:12px 16px 0;border-radius:3px;overflow:hidden}.score-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#06b6d4);border-radius:3px}.score-lbl{font-size:11px;color:var(--text2);padding:4px 16px 12px}.stats-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border)}@media(max-width:900px){.stats-grid{grid-template-columns:repeat(4,1fr)}}@media(max-width:500px){.stats-grid{grid-template-columns:repeat(3,1fr)}}.sc{background:var(--surface);padding:12px 14px}.sl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}.sv{font-size:16px;font-weight:700}.ch-hdr{padding:12px 16px 0;display:flex;align-items:center;justify-content:space-between}.ch-ttl{font-size:13px;font-weight:600}.pbs{display:flex;gap:3px}.pb{padding:4px 10px;font-size:11px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s}.pb:hover,.pb.active{background:var(--primary);color:#fff;border-color:var(--primary)}.lgd{display:flex;gap:14px;padding:6px 16px;flex-wrap:wrap}.li{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px}.chart-area{padding:16px;height:260px;position:relative}.sug-hdr{padding:12px 16px 4px;font-size:13px;font-weight:600}.sug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px 16px}@media(max-width:500px){.sug-grid{grid-template-columns:1fr}}.sug-card{border-radius:10px;padding:14px;text-align:center;border:1px solid}.sug-card.low{background:#f0fdfa;border-color:#99f6e4}.sug-card.avg{background:#eff6ff;border-color:#bfdbfe}.sug-card.high{background:#fefce8;border-color:#fde68a}.sug-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}.sug-card.low .sug-title{color:#0d9488}.sug-card.avg .sug-title{color:#2563eb}.sug-card.high .sug-title{color:#d97706}.sug-amt{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}.sug-ds{font-size:11px;color:var(--text2)}.sug-note{margin:0 16px 16px;padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--primary);font-size:12px;line-height:1.6}.search-wrap{position:relative;margin-bottom:14px}.search-input{width:100%;padding:13px 44px 13px 16px;font-size:15px;border:2px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);outline:none;transition:border-color .2s}.search-input:focus{border-color:var(--primary)}.si{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:18px;pointer-events:none}.search-results{background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);max-height:340px;overflow-y:auto;margin-bottom:16px}.search-item{padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s}.search-item:last-child{border-bottom:none}.search-item:hover{background:var(--primary-light)}.search-item-name{font-size:13px;font-weight:500}.empty-state{padding:40px;text-align:center;color:var(--text2);font-size:14px}.manager-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}.mgr-card{background:var(--surface);border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:all .2s;overflow:hidden}.mgr-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}.mgr-card.open{border-color:var(--primary)}.mgr-header{padding:16px;display:flex;align-items:center;gap:12px}.mgr-av{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0}.mgr-name{font-size:15px;font-weight:700}.mgr-house{font-size:12px;color:var(--text2);margin-top:1px}.mgr-exp{font-size:11px;color:var(--text3);margin-top:1px}.mgr-tag{padding:0 16px 12px;font-size:12px;color:var(--text2);line-height:1.5}.mgr-pills{padding:0 16px 14px;display:flex;gap:6px;flex-wrap:wrap}.pill{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}.pill.blue{background:var(--primary-light);color:var(--primary)}.mgr-det{border-top:1px solid var(--border);display:none}.mgr-card.open .mgr-det{display:block}.rtable{width:100%;border-collapse:collapse;font-size:12px}.rtable th{padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);border-bottom:1px solid var(--border)}.rtable td{padding:9px 10px;border-bottom:1px solid var(--border)}.rtable tr:last-child td{border-bottom:none}.rtable tr:hover td{background:var(--surface2)}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.refresh-btn{background:none;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8);padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;transition:all .2s;margin-left:8px}
+.refresh-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+@media(max-width:640px){
+body{-webkit-text-size-adjust:100%}
+.header{padding:11px 14px;gap:9px;padding-top:max(11px,env(safe-area-inset-top))}
+.hlogo{width:30px;height:30px;font-size:16px;border-radius:8px}
+.htitle{font-size:16px}
+.hsub{font-size:10px}
+.hbadge{font-size:10px;padding:2px 8px}
+.tabs{padding:0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 13px;font-size:13px}
+.content{padding:14px 12px;max-width:100%}
+.sh h2{font-size:17px}
+.sh p{font-size:12px}
+.filters{gap:5px;margin-bottom:11px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter-btn{flex-shrink:0;padding:6px 13px;font-size:12px}
+.sort-row{gap:5px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.sort-row::-webkit-scrollbar{display:none}
+.sort-btn{flex-shrink:0;padding:6px 13px;font-size:12px}
+.sort-lbl{flex-shrink:0}
+.stats-grid{grid-template-columns:repeat(3,1fr)!important}
+.sc{padding:9px 8px}
+.sl{font-size:8px;letter-spacing:.3px}
+.sv{font-size:14px}
+.chart-area{height:210px;padding:11px}
+.ch-hdr{padding:11px 12px 0;flex-wrap:wrap;gap:7px}
+.pbs{flex-wrap:wrap}
+.pb{padding:5px 10px;font-size:11px}
+.sug-grid{grid-template-columns:1fr!important;padding:0 12px 12px}
+.sug-note{margin:0 12px 12px;font-size:11px}
+.search-input{font-size:16px;padding:13px 42px 13px 14px}
+table{font-size:12px}
+.card,.fund-card{border-radius:11px}
+button,.tab,.filter-btn,.sort-btn,.pb{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+}
+@media(max-width:400px){
+.stats-grid{grid-template-columns:repeat(2,1fr)!important}
+.htitle{font-size:15px}
+}
+</style></head><body><div class="header"><div class="hlogo">&#128200;</div><div><div class="htitle">India Fund Tracker</div><div class="hsub">602 funds &middot; 2026-06-01 15:25</div></div><button class="refresh-btn" onclick="triggerRefresh()">&#8635; Refresh Data</button><div class="hbadge">&#128202; 602 Funds</div></div><div class="tabs"><div class="tab active" onclick="switchTab('top10')">&#127942; Top 10 Funds</div><div class="tab" onclick="switchTab('search')">&#128269; Search Funds</div><div class="tab" onclick="switchTab('managers')">&#128100; Fund Managers</div></div><div class="content"><div class="section active" id="s0"><div class="sh"><h2>Top 10 Performing Funds</h2><p>Best funds per category &mdash; ranked by composite score, 1Y return, Sharpe vs category avg, and manager track record.</p><span class="sh-note">Only funds above category average in both 1Y return AND Sharpe qualify</span></div><div class="sort-row"><span class="sort-lbl">Sort by:</span><button class="sort-btn active" onclick="sortByPeriod('score',this)">&#127942; Score</button><button class="sort-btn" onclick="sortByPeriod('r1m',this)">1 Month</button><button class="sort-btn" onclick="sortByPeriod('r6m',this)">6 Months</button><button class="sort-btn" onclick="sortByPeriod('r1y',this)">1 Year</button><button class="sort-btn" onclick="sortByPeriod('r3y',this)">3 Years</button></div><div class="filters"><button class="filter-btn active" onclick="filterTop('all',this)">All</button><button class="filter-btn" onclick="filterTop('Small Cap',this)">Small Cap</button><button class="filter-btn" onclick="filterTop('Mid Cap',this)">Mid Cap</button><button class="filter-btn" onclick="filterTop('Large Cap',this)">Large Cap</button><button class="filter-btn" onclick="filterTop('Flexi Cap',this)">Flexi Cap</button><button class="filter-btn" onclick="filterTop('Index',this)">Index</button><button class="filter-btn" onclick="filterTop('Sectoral/Thematic',this)">Sectoral</button></div><div class="card" id="top10-list"></div></div><div class="section" id="s1"><div class="sh"><h2>Search Mutual Funds</h2><p>Wildcard search across 602 funds.</p></div><div class="search-wrap"><input class="search-input" id="search-input" type="text" placeholder="e.g. SBI small cap, Axis mid, Parag Parikh, ICICI tech..." oninput="doSearch(this.value)"><span class="si">&#128269;</span></div><div id="srch-res"></div><div id="srch-det"></div><div id="srch-ph" class="empty-state"><div style="font-size:36px;margin-bottom:10px">&#128270;</div>Search 602 Indian mutual funds</div></div><div class="section" id="s2"><div class="sh"><h2>Top Fund Managers</h2><p>Click any manager to see tracked funds and performance.</p></div><div class="manager-grid" id="mgr-grid"></div></div></div><script>
+
+var FUND_LIST=[], FUND_NAV={}, BENCHMARK=null, DATA_DATE='';
+var _dataLoaded=false;
+
+function showToast(msg,color){
+  var t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:8px;font-size:13px;color:#fff;font-weight:500;z-index:9999;transition:opacity .3s;';document.body.appendChild(t);}
+  t.style.background=color||'#1a56db'; t.style.opacity='1'; t.textContent=msg;
+  setTimeout(function(){t.style.opacity='0';},3000);
+}
+
+async function loadData(){
+  var el=document.getElementById('top10-list');
+  el.innerHTML='<div style="padding:32px;text-align:center"><div class="spinner"></div><div style="color:var(--text2);font-size:14px;margin-top:12px">Loading fund data...</div></div>';
+  try{
+    var resp=await fetch('./fund_data.json?t='+Date.now());
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    var d=await resp.json();
+    FUND_LIST=d.funds.map(function(f){return{
+      schemeCode:f.schemeCode,name:f.name,house:f.house,
+      category:f.category,type:f.type,label:f.label,
+      nav:f.nav,r1m:f.r1m,r6m:f.r6m,r1y:f.r1y,r3y:f.r3y,r5y:f.r5y,
+      vol:f.vol,sharpe:f.sharpe,cat_avg_sharpe:f.cat_avg_sharpe,
+      score:f.score||0,r1y_pct:f.r1y_pct||50,sharpe_pct:f.sharpe_pct||50,
+      above_avg:f.above_avg||false,manager_score:f.manager_score||0.5
+    };});
+    FUND_NAV={};
+    d.funds.forEach(function(f){FUND_NAV[String(f.schemeCode)]=f.navHistory||[];});
+    var bmk=d.funds.find(function(f){return f.name.toLowerCase().indexOf('nifty 50')>=0&&f.name.toLowerCase().indexOf('index')>=0;});
+    BENCHMARK=bmk?{name:bmk.name,navHistory:FUND_NAV[String(bmk.schemeCode)]}:null;
+    DATA_DATE=d.generated||'';
+    document.querySelector('.hsub').textContent=d.total+' funds · '+d.generated;
+    document.querySelector('.hbadge').textContent='📊 '+d.total+' Funds';
+    _dataLoaded=true;
+    renderTop10('all');
+    renderMgrs();
+    showToast('Data loaded: '+d.total+' funds','#0d9488');
+  }catch(e){
+    el.innerHTML='<div style="padding:32px;text-align:center;color:var(--red)">'
+      +'<div style="font-size:32px;margin-bottom:12px">⚠️</div>'
+      +'<div style="font-size:15px;font-weight:600;margin-bottom:8px">Server not running</div>'
+      +'<div style="font-size:13px;color:var(--text2);max-width:360px;margin:0 auto;line-height:1.6">'
+      +'Start the server first:<br><code style="background:var(--bg);padding:6px 12px;border-radius:6px;display:inline-block;margin-top:8px;font-size:12px">python server.py</code>'
+      +'</div></div>';
+    console.error('Load error:',e);
+  }
+}
+
+async function triggerRefresh(){
+  showToast('Refreshing data in background...','#d97706');
+  try{
+    await Promise.resolve({ok:true,json:function(){return{status:'cloud'}}});
+    showToast('Refresh started! Check back in 30-40 min.','#d97706');
+  }catch(e){showToast('Server not running','#dc2626');}
+}
+
+// Auto-reload data every 5 minutes
+setInterval(function(){if(_dataLoaded)loadData();},5*60*1000);
+
+function pDate(s){var p=s.split('-');return new Date(+p[2],+p[1]-1,+p[0]);}
+function fmt(v){return v!=null?v.toFixed(2)+'%':'--';}
+function fmtCAGR(v,years){
+  if(v==null)return '--';
+  // Convert total return to CAGR: ((1+r)^(1/years))-1
+  var cagr=(Math.pow(1+v/100,1/years)-1)*100;
+  return cagr.toFixed(2)+'%';
+}
+function colorR(v){return (v||0)>=0?'var(--green)':'var(--red)';}
+var _charts={};
+function killChart(id){if(_charts[id]){_charts[id].destroy();delete _charts[id];}}
+function labelFor(f){
+  var c=(f.category||'').toLowerCase();
+  if(c.indexOf('small cap')>=0)return 'Small Cap';
+  if(c.indexOf('large & mid')>=0||c.indexOf('large and mid')>=0)return 'Large & Mid Cap';
+  if(c.indexOf('mid cap')>=0||c.indexOf('midcap')>=0)return 'Mid Cap';
+  if(c.indexOf('large cap')>=0||c.indexOf('bluechip')>=0)return 'Large Cap';
+  if(c.indexOf('flexi cap')>=0||c.indexOf('flexicap')>=0)return 'Flexi Cap';
+  if(c.indexOf('index')>=0||c.indexOf('nifty')>=0||c.indexOf('sensex')>=0)return 'Index';
+  if(c.indexOf('sectoral')>=0||c.indexOf('thematic')>=0)return 'Sectoral';
+  return f.label||'Equity';
+}
+function filterH(hist,days){var cut=new Date();cut.setDate(cut.getDate()-days);return(hist||[]).filter(function(p){return pDate(p.d)>=cut;}).reverse();}
+function norm100(arr){if(!arr.length)return[];var b=parseFloat(arr[0].v);return arr.map(function(p){return{d:p.d,v:parseFloat(p.v)/b*100};});}
+function downsample(arr,n){n=n||100;if(arr.length<=n)return arr;var s=Math.floor(arr.length/n);return arr.filter(function(_,i){return i%s===0;});}
+function drawChart(cid,fund,days){
+  killChart(cid);var el=document.getElementById(cid);if(!el)return;
+  var navH=FUND_NAV[String(fund.schemeCode)]||[];
+  var fh=filterH(navH,days),fn=norm100(fh),fs=downsample(fn);
+  var bmkH=BENCHMARK?filterH(BENCHMARK.navHistory,days):[];
+  var bn=norm100(bmkH),bs=downsample(bn);
+  var ds=[{label:fund.name.split(' ').slice(0,4).join(' '),data:fs.map(function(p){return p.v;}),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.07)',borderWidth:2,pointRadius:0,tension:0.4,fill:true}];
+  if(bs.length){ds.push({label:'Nifty 50',data:fs.map(function(fp){var t=pDate(fp.d),cl=bs[0],md=1e15;bs.forEach(function(b){var dif=Math.abs(pDate(b.d)-t);if(dif<md){md=dif;cl=b;}});return cl?cl.v:null;}),borderColor:'#f59e0b',backgroundColor:'transparent',borderDash:[5,4],borderWidth:2,pointRadius:0,tension:0.4,fill:false});}
+  _charts[cid]=new Chart(el,{type:'line',data:{labels:fs.map(function(p){return p.d;}),datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxTicksLimit:6,font:{size:10},color:'#94a3b8'},grid:{color:'rgba(0,0,0,.03)'}},y:{ticks:{font:{size:10},color:'#94a3b8'},grid:{color:'rgba(0,0,0,.03)'}}},interaction:{mode:'nearest',axis:'x',intersect:false}}});
+}
+function suggestion(fund){
+  var r=fund.r1y||0,v=fund.vol||0,hi=v>1.4,lo=v<0.5,note;
+  if(r<0)note='1Y return '+r.toFixed(1)+'% is negative. May be cyclical - check 3Y/5Y. SIP during dips lowers cost.';
+  else if(r>25)note='Exceptional '+r.toFixed(1)+'% in 1Y. '+(hi?'High volatility - SIP only.':'Moderate - good for SIP or staggered lumpsum.');
+  else note='Steady '+r.toFixed(1)+'% 1Y. '+(hi?'Higher volatility, prefer SIP.':'Moderate risk, 3-5 year horizon.')+' Sharpe: '+(fund.sharpe?fund.sharpe.toFixed(2):'--')+'.';
+  return{low:hi?'Rs 500-2,000/mo SIP':lo?'Rs 5,000-10,000/mo SIP':'Rs 2,000-5,000/mo SIP',avg:hi?'Rs 5,000-15,000/mo SIP':lo?'Rs 25,000-50,000/mo SIP':'Rs 10,000-25,000/mo SIP',high:hi?'Rs 25,000+/mo SIP only':lo?'Rs 1L+ Lumpsum':'Rs 50,000+ Lumpsum or SIP',note:note};
+}
+var _fd={};
+function changePeriod(e,code,days,btn){btn.parentNode.querySelectorAll('.pb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');var fd=_fd[code];if(fd)drawChart(fd.cid,fd.fund,days);}
+function fundHTML(fund){
+  var sug=suggestion(fund),cid='ch'+fund.schemeCode+'t'+Date.now();
+  _fd[fund.schemeCode]={fund:fund,cid:cid};
+  var lb=labelFor(fund),t=fund.type||'equity';
+  var sh=fund.sharpe!=null?fund.sharpe.toFixed(2):'--';
+  var cas=fund.cat_avg_sharpe!=null?fund.cat_avg_sharpe.toFixed(2):'--';
+  var abv=(fund.sharpe||0)>(fund.cat_avg_sharpe||0);
+  var scoreBar=fund.score?('<div class="score-bar"><div class="score-fill" style="width:'+Math.min(fund.score,100)+'%"></div></div><div class="score-lbl">Score: '+fund.score.toFixed(1)+' | 1Y Pct: '+(fund.r1y_pct||0).toFixed(0)+'% | Sharpe Pct: '+(fund.sharpe_pct||0).toFixed(0)+'%</div>'):'';
+  return '<div class="inline-detail"><div class="det-hd"><span class="badge '+t+'">'+lb+'</span> <span class="hs">'+fund.house+'</span><div class="det-nm">'+fund.name+'</div><div style="display:flex;align-items:baseline;gap:12px;margin-top:6px"><span class="det-nav">Rs '+((fund.nav||0).toFixed(4))+'</span><span class="hs">Latest NAV</span></div></div>'
+    +scoreBar
+    +'<div class="stats-grid"><div class="sc"><div class="sl">1M Return</div><div class="sv" style="color:'+colorR(fund.r1m)+'">'+fmt(fund.r1m)+'</div></div><div class="sc"><div class="sl">6M Return</div><div class="sv" style="color:'+colorR(fund.r6m)+'">'+fmt(fund.r6m)+'</div></div><div class="sc"><div class="sl">1Y Return</div><div class="sv" style="color:'+colorR(fund.r1y)+'">'+fmt(fund.r1y)+'</div></div><div class="sc"><div class="sl">3Y Return</div><div class="sv" style="color:'+colorR(fund.r3y)+'">'+fmt(fund.r3y)+'</div></div><div class="sc"><div class="sl">5Y Return</div><div class="sv" style="color:'+colorR(fund.r5y)+'">'+fmt(fund.r5y)+'</div></div><div class="sc"><div class="sl">Sharpe Ratio</div><div class="sv" style="color:'+colorR(fund.sharpe)+'">'+sh+'</div></div><div class="sc" style="border-left:2px solid var(--primary-light)"><div class="sl">'+lb+' Avg Sharpe</div><div class="sv" style="color:var(--primary)">'+cas+'</div><div style="font-size:10px;margin-top:3px;color:'+(abv?'var(--green)':'var(--red)')+';">'+(abv?'&#9650; Above avg':'&#9660; Below avg')+'</div></div></div>'
+    +'<div class="ch-hdr"><span class="ch-ttl">Performance vs Nifty 50</span><div class="pbs"><button class="pb active" onclick="changePeriod(event,'+fund.schemeCode+',30,this)">1M</button><button class="pb" onclick="changePeriod(event,'+fund.schemeCode+',180,this)">6M</button><button class="pb" onclick="changePeriod(event,'+fund.schemeCode+',365,this)">1Y</button><button class="pb" onclick="changePeriod(event,'+fund.schemeCode+',730,this)">2Y</button></div></div>'
+    +'<div class="lgd"><span class="li"><span style="display:inline-block;width:12px;height:3px;background:#3b82f6;vertical-align:middle;margin-right:4px"></span>'+fund.name.split(' ').slice(0,3).join(' ')+'</span><span class="li"><span style="display:inline-block;width:12px;height:3px;background:#f59e0b;vertical-align:middle;margin-right:4px"></span>Nifty 50</span></div>'
+    +'<div class="chart-area"><canvas id="'+cid+'"></canvas></div>'
+    +'<div class="sug-hdr">Investment Suggestion</div><div class="sug-grid"><div class="sug-card low"><div class="sug-title">Conservative</div><div class="sug-amt">'+sug.low+'</div><div class="sug-ds">Start small, review after 6 months.</div></div><div class="sug-card avg"><div class="sug-title">Moderate</div><div class="sug-amt">'+sug.avg+'</div><div class="sug-ds">Suitable for 5+ year horizon.</div></div><div class="sug-card high"><div class="sug-title">Aggressive</div><div class="sug-amt">'+sug.high+'</div><div class="sug-ds">For experienced investors only.</div></div></div><div class="sug-note"><b>Assessment:</b> '+sug.note+'</div></div>';
+}
+var curFilter='all',openCode=null,curPeriod='score';
+function getTop10(filter){
+  var pk=curPeriod;
+  var cats=['Small Cap','Mid Cap','Large Cap','Flexi Cap','Index','Sectoral/Thematic'];
+  var result=[];
+  if(filter==='all'){
+    cats.forEach(function(cat){
+      var cf=FUND_LIST.filter(function(f){return f.label===cat&&f.above_avg&&f[pk]!=null;});
+      cf.sort(function(a,b){return (b[pk]||0)-(a[pk]||0);});
+      cf.slice(0,2).forEach(function(f){result.push(f);});
+    });
+    result.sort(function(a,b){return (b[pk]||0)-(a[pk]||0);});
+    result=result.slice(0,10);
+  } else {
+    var cf=FUND_LIST.filter(function(f){return f.label===filter&&f[pk]!=null;});
+    cf.sort(function(a,b){return (b[pk]||0)-(a[pk]||0);});
+    result=cf.slice(0,10);
+  }
+  return result;
+}
+function sortByPeriod(period,btn){curPeriod=period;openCode=null;document.querySelectorAll('.sort-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderTop10(curFilter);}
+function renderTop10(filter){
+  var el=document.getElementById('top10-list');
+  var top=getTop10(filter);
+  if(!top.length){el.innerHTML='<div class="empty-state">No qualifying funds in this category.</div>';return;}
+  var html='';
+  top.forEach(function(f,i){
+    var isOpen=openCode===f.schemeCode;
+    html+='<div class="fund-row'+(isOpen?' active':'')+'" id="row'+f.schemeCode+'" onclick="toggleFund('+f.schemeCode+')">'
+      +'<div class="rank '+(i<3?'top3':'')+'">'+( i+1)+'</div>'
+      +'<div class="fund-info"><div class="fund-name">'+f.name+'</div>'
+      +'<div class="fund-meta"><span class="badge '+(f.type||'equity')+'">'+labelFor(f)+'</span>'
+      +(f.house?' <span>'+(f.house||'').split(' ').slice(0,3).join(' ')+'</span>':'')
+      +' <span>NAV Rs '+(f.nav||0).toFixed(2)+'</span>'
+      +(f.sharpe!=null?' <span style="color:var(--primary);font-size:10px">Sharpe '+f.sharpe.toFixed(2)+'</span>':'')
+      +'</div></div>'
+      +'<div class="returns">'
+      +(f.r1m!=null?'<div><div class="ret-val '+(f.r1m>=0?'pos':'neg')+'">'+fmt(f.r1m)+'</div><div class="ret-lbl">1M</div></div>':'')
+      +(f.r6m!=null?'<div><div class="ret-val '+(f.r6m>=0?'pos':'neg')+'">'+fmt(f.r6m)+'</div><div class="ret-lbl">6M</div></div>':'')
+      +(f.r1y!=null?'<div><div class="ret-val '+(f.r1y>=0?'pos':'neg')+'">'+fmt(f.r1y)+'</div><div class="ret-lbl">1Y</div></div>':'')
+      +(f.r3y!=null?'<div><div class="ret-val '+(f.r3y>=0?'pos':'neg')+'">'+fmtCAGR(f.r3y,3)+'</div><div class="ret-lbl">3Y CAGR</div></div>':'')
+      +'</div></div>'
+      +'<div id="det'+f.schemeCode+'" style="display:'+(isOpen?'block':'none')+'">'+(isOpen?fundHTML(f):'')+'</div>';
+  });
+  el.innerHTML=html;
+  if(openCode){setTimeout(function(){var fd=_fd[openCode];if(fd)drawChart(fd.cid,fd.fund,30);},50);}
+}
+function toggleFund(code){
+  if(openCode===code){openCode=null;renderTop10(curFilter);return;}
+  openCode=code;renderTop10(curFilter);
+  setTimeout(function(){var fd=_fd[code];if(fd)drawChart(fd.cid,fd.fund,30);var row=document.getElementById('row'+code);if(row)row.scrollIntoView({behavior:'smooth',block:'nearest'});},60);
+}
+function filterTop(type,btn){curFilter=type;openCode=null;document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderTop10(type);}
+function doSearch(val){
+  var ph=document.getElementById('srch-ph'),rw=document.getElementById('srch-res'),dw=document.getElementById('srch-det');
+  if(val.length<2){ph.style.display='block';rw.innerHTML='';dw.innerHTML='';return;}
+  ph.style.display='none';
+  var tokens=val.toLowerCase().split(' ').filter(function(t){return t.length>0;});
+  var hits=FUND_LIST.filter(function(f){var n=(f.name||'').toLowerCase();return tokens.every(function(t){return n.indexOf(t)>=0;});}).slice(0,40);
+  if(!hits.length){rw.innerHTML='<div class="search-results"><div style="padding:12px 14px;color:var(--text2);font-size:13px">No results.</div></div>';return;}
+  rw.innerHTML='<div class="search-results">'+hits.map(function(f){return '<div class="search-item" onclick="showDet('+f.schemeCode+')">'+'<div class="search-item-name">'+f.name+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px">'+labelFor(f)+' &middot; '+f.house+(f.r1m!=null?' &middot; 1M: <b style="color:'+(f.r1m>=0?'var(--green)':'var(--red)')+'">'+fmt(f.r1m)+'</b>':'')+(f.r1y!=null?' &middot; 1Y: <b style="color:'+(f.r1y>=0?'var(--green)':'var(--red)')+'">'+fmt(f.r1y)+'</b>':'')+'</div></div>';}).join('')+'</div>';
+}
+function showDet(code){
+  document.getElementById('srch-res').innerHTML='';document.getElementById('search-input').value='';
+  var dw=document.getElementById('srch-det');
+  var fund=FUND_LIST.find(function(f){return f.schemeCode===code;});
+  if(fund){dw.innerHTML='<div class="card">'+fundHTML(fund)+'</div>';setTimeout(function(){var fd=_fd[code];if(fd)drawChart(fd.cid,fd.fund,30);},60);}
+}
+var MGRS=[
+  {name:'Neelesh Surana',house:'Mirae Asset MF',exp:'24+ yrs',style:'GARP',av:'NS',col:'#3b82f6',tag:'Consistent large-cap outperformance with disciplined bottom-up stock picking.',codes:[118825,147445]},
+  {name:'Rajeev Thakkar',house:'PPFAS MF',exp:'20+ yrs',style:'Value/Contrarian',av:'RT',col:'#8b5cf6',tag:'Champion of long-term value investing with global portfolio diversification.',codes:[122639]},
+  {name:'Sailesh Raj Bhan',house:'Nippon India MF',exp:'22+ yrs',style:'Bottom-Up Growth',av:'SB',col:'#ef4444',tag:'Pioneer in small and mid cap investing; built Nippon equity franchise over two decades.',codes:[118778,118650]},
+  {name:'Harsha Upadhyaya',house:'Kotak MF',exp:'25+ yrs',style:'Fundamental',av:'HU',col:'#f59e0b',tag:'Deep fundamental research; consistent risk-adjusted large-cap returns for 25 years.',codes:[120152]},
+  {name:'Atul Penkar / Team',house:'DSP MF',exp:'20+ yrs',style:'Quant + Fundamental',av:'DP',col:'#10b981',tag:'DSP team combines quantitative screens with fundamental research for small cap alpha.',codes:[119212]},
+  {name:'Chandraprakash Padiyar',house:'Tata MF',exp:'18+ yrs',style:'Growth',av:'CP',col:'#06b6d4',tag:'Focused on identifying small-cap businesses with strong earnings growth potential.',codes:[145206]},
+];
+function renderMgrs(){
+  document.getElementById('mgr-grid').innerHTML=MGRS.map(function(m,i){
+    var mf=m.codes.map(function(c){return FUND_LIST.find(function(f){return f.schemeCode===c;});}).filter(Boolean);
+    var avg=mf.length?mf.reduce(function(a,f){return a+(f.r1y||0);},0)/mf.length:null;
+    return '<div class="mgr-card" id="mc'+i+'" onclick="toggleMgr('+i+')">'
+      +'<div class="mgr-header"><div class="mgr-av" style="background:linear-gradient(135deg,'+m.col+','+m.col+'aa)">'+m.av+'</div>'
+      +'<div><div class="mgr-name">'+m.name+'</div><div class="mgr-house">'+m.house+'</div><div class="mgr-exp">'+m.exp+' &middot; '+m.style+'</div></div></div>'
+      +'<div class="mgr-tag">'+m.tag+'</div>'
+      +'<div class="mgr-pills"><span class="pill blue">'+mf.length+' fund'+(mf.length!==1?'s':'')+'</span>'
+      +(avg!=null?'<span class="pill" style="background:'+(avg>=0?'var(--green-light)':'var(--red-light)')+';color:'+(avg>=0?'var(--green)':'var(--red)')+'">Avg 1Y: '+avg.toFixed(1)+'%</span>':'')
+      +'</div><div class="mgr-det" id="md'+i+'"></div></div>';
+  }).join('');
+}
+function toggleMgr(i){
+  var card=document.getElementById('mc'+i);
+  if(card.classList.contains('open')){card.classList.remove('open');return;}
+  document.querySelectorAll('.mgr-card.open').forEach(function(c){c.classList.remove('open');});
+  card.classList.add('open');
+  var m=MGRS[i];
+  var mf=m.codes.map(function(c){return FUND_LIST.find(function(f){return f.schemeCode===c;});}).filter(Boolean);
+  var det=document.getElementById('md'+i);
+  if(!mf.length){det.innerHTML='<div style="padding:14px;color:var(--text2)">No fund data available.</div>';return;}
+  var cid='mgrc'+i+'t'+Date.now();
+  var rows=mf.map(function(f){return '<tr><td><b>'+f.name.split('-')[0].trim()+'</b><br><small style="color:var(--text3)">'+labelFor(f)+'</small></td><td style="color:'+colorR(f.r1m)+';font-weight:700">'+fmt(f.r1m)+'</td><td style="color:'+colorR(f.r6m)+';font-weight:700">'+fmt(f.r6m)+'</td><td style="color:'+colorR(f.r1y)+';font-weight:700">'+fmt(f.r1y)+'</td><td style="color:'+colorR(f.r3y)+';font-weight:700">'+fmt(f.r3y)+'</td><td>'+(f.sharpe!=null?f.sharpe.toFixed(2):'--')+'</td></tr>';}).join('');
+  det.innerHTML='<div style="padding:14px"><table class="rtable"><thead><tr><th>Fund</th><th>1M</th><th>6M</th><th>1Y</th><th>3Y</th><th>Sharpe</th></tr></thead><tbody>'+rows+'</tbody></table><div style="font-size:12px;font-weight:600;margin:14px 0 6px">1-Year Performance (Indexed to 100)</div><div style="height:180px;position:relative"><canvas id="'+cid+'"></canvas></div></div>';
+  setTimeout(function(){
+    var el=document.getElementById(cid);if(!el)return;killChart(cid);
+    var cols=['#3b82f6','#10b981','#f59e0b','#ef4444'];
+    var base=filterH(FUND_NAV[String(mf[0].schemeCode)]||[],365),baseN=norm100(base),labels=downsample(baseN).map(function(p){return p.d;});
+    var ds=mf.map(function(f,fi){var h=filterH(FUND_NAV[String(f.schemeCode)]||[],365),n=norm100(h),s=downsample(n);return{label:f.name.split(' ').slice(0,3).join(' '),data:s.map(function(p){return p.v;}),borderColor:cols[fi%4],backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:0.4};});
+    _charts[cid]=new Chart(el,{type:'line',data:{labels:labels,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:14,padding:8}}},scales:{x:{ticks:{maxTicksLimit:5,font:{size:9},color:'#94a3b8'},grid:{color:'rgba(0,0,0,.03)'}},y:{ticks:{font:{size:9},color:'#94a3b8'},grid:{color:'rgba(0,0,0,.03)'}}}}});
+  },60);
+}
+function switchTab(tab){['top10','search','managers'].forEach(function(t,i){document.querySelectorAll('.tab')[i].classList.toggle('active',t===tab);document.querySelectorAll('.section')[i].classList.toggle('active',t===tab);});}
+renderTop10('all');renderMgrs();
+
+
+loadData();
+</script></body></html>
