@@ -37,12 +37,69 @@ body{-webkit-text-size-adjust:100%}
 table{font-size:12px}
 .card,.fund-card{border-radius:11px}
 button,.tab,.filter-btn,.sort-btn,.pb{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.fund-name{white-space:normal;overflow:hidden;text-overflow:clip;line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.fund-meta{font-size:10px;gap:5px;margin-top:3px}
+.det-nm{font-size:15px;line-height:1.35;word-break:break-word}
+.det-hd{padding:14px 14px}
+.det-nav{font-size:21px}
+.hs{font-size:11px}
+.score-lbl{font-size:10px;line-height:1.45}
+.rank{width:24px;height:24px;font-size:11px}
+
 }
 @media(max-width:400px){
 .stats-grid{grid-template-columns:repeat(2,1fr)!important}
 .htitle{font-size:15px}
 }
-</style></head><body><div class="header"><div class="hlogo">&#128200;</div><div><div class="htitle">India Fund Tracker</div><div class="hsub">602 funds &middot; 2026-06-01 15:25</div></div><button class="refresh-btn" onclick="triggerRefresh()">&#8635; Refresh Data</button><div class="hbadge">&#128202; 602 Funds</div></div><div class="tabs"><div class="tab active" onclick="switchTab('top10')">&#127942; Top 10 Funds</div><div class="tab" onclick="switchTab('search')">&#128269; Search Funds</div><div class="tab" onclick="switchTab('managers')">&#128100; Fund Managers</div></div><div class="content"><div class="section active" id="s0"><div class="sh"><h2>Top 10 Performing Funds</h2><p>Best funds per category &mdash; ranked by composite score, 1Y return, Sharpe vs category avg, and manager track record.</p><span class="sh-note">Only funds above category average in both 1Y return AND Sharpe qualify</span></div><div class="sort-row"><span class="sort-lbl">Sort by:</span><button class="sort-btn active" onclick="sortByPeriod('score',this)">&#127942; Score</button><button class="sort-btn" onclick="sortByPeriod('r1m',this)">1 Month</button><button class="sort-btn" onclick="sortByPeriod('r6m',this)">6 Months</button><button class="sort-btn" onclick="sortByPeriod('r1y',this)">1 Year</button><button class="sort-btn" onclick="sortByPeriod('r3y',this)">3 Years</button></div><div class="filters"><button class="filter-btn active" onclick="filterTop('all',this)">All</button><button class="filter-btn" onclick="filterTop('Small Cap',this)">Small Cap</button><button class="filter-btn" onclick="filterTop('Mid Cap',this)">Mid Cap</button><button class="filter-btn" onclick="filterTop('Large Cap',this)">Large Cap</button><button class="filter-btn" onclick="filterTop('Flexi Cap',this)">Flexi Cap</button><button class="filter-btn" onclick="filterTop('Index',this)">Index</button><button class="filter-btn" onclick="filterTop('Sectoral/Thematic',this)">Sectoral</button></div><div class="card" id="top10-list"></div></div><div class="section" id="s1"><div class="sh"><h2>Search Mutual Funds</h2><p>Wildcard search across 602 funds.</p></div><div class="search-wrap"><input class="search-input" id="search-input" type="text" placeholder="e.g. SBI small cap, Axis mid, Parag Parikh, ICICI tech..." oninput="doSearch(this.value)"><span class="si">&#128269;</span></div><div id="srch-res"></div><div id="srch-det"></div><div id="srch-ph" class="empty-state"><div style="font-size:36px;margin-bottom:10px">&#128270;</div>Search 602 Indian mutual funds</div></div><div class="section" id="s2"><div class="sh"><h2>Top Fund Managers</h2><p>Click any manager to see tracked funds and performance.</p></div><div class="manager-grid" id="mgr-grid"></div></div></div><script>
+
+.ov-picker{margin-bottom:12px}
+.ov-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.ov-chip{display:flex;align-items:center;gap:7px;background:var(--primary-light);border:1px solid #bfdbfe;color:var(--primary);border-radius:20px;padding:6px 8px 6px 13px;font-size:12px;font-weight:500;max-width:100%}
+.ov-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}
+.ov-chip button{background:rgba(26,86,219,.16);border:0;color:var(--primary);width:19px;height:19px;border-radius:50%;cursor:pointer;font-size:13px;line-height:1;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ov-chip button:hover{background:var(--primary);color:#fff}
+.ov-warn{background:var(--gold-light);border:1px solid #fde68a;color:#92400e;border-radius:9px;padding:11px 14px;font-size:12.5px;line-height:1.55;margin-bottom:12px}
+.ov-err{background:var(--red-light);border:1px solid #fecaca;color:#991b1b;border-radius:9px;padding:13px 15px;font-size:12.5px;line-height:1.6;margin-bottom:12px}
+.ov-err code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:4px;font-size:11px;word-break:break-all}
+.ov-err pre{background:#fff;border:1px solid #fecaca;border-radius:6px;padding:9px;margin-top:9px;font-size:10.5px;max-height:190px;overflow:auto;white-space:pre-wrap;word-break:break-all;color:#1e293b}
+.ov-go{width:100%;padding:13px;border-radius:10px;border:0;background:var(--primary);color:#fff;font-size:14.5px;font-weight:600;cursor:pointer;margin-bottom:14px}
+.ov-go:disabled{background:var(--border);color:var(--text3);cursor:not-allowed}
+.ov-hero{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;border-radius:13px;padding:22px 18px;text-align:center;margin-bottom:14px}
+.ov-pct{font-size:44px;font-weight:800;line-height:1}
+.ov-pct-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:rgba(255,255,255,.62);margin-top:6px}
+.ov-verdict{font-size:13px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);line-height:1.6;color:rgba(255,255,255,.9)}
+.ov-card{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+.ov-hd{padding:13px 15px;font-size:13.5px;font-weight:700;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:9px}
+.ov-hd small{font-weight:400;color:var(--text2);font-size:11px}
+.ov-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.ov-tbl th{background:var(--surface2);color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:9px 11px;text-align:right;font-weight:600;white-space:nowrap}
+.ov-tbl th:first-child{text-align:left}
+.ov-tbl td{padding:9px 11px;border-top:1px solid var(--border);text-align:right;white-space:nowrap}
+.ov-tbl td:first-child{text-align:left;white-space:normal;font-weight:500;min-width:120px}
+.ov-tbl tbody tr:hover{background:var(--surface2)}
+.ov-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ov-mini{font-size:11px;color:var(--text2);padding:10px 15px;line-height:1.55;background:var(--surface2)}
+.pair-row{display:flex;justify-content:space-between;align-items:center;gap:11px;padding:11px 15px;border-top:1px solid var(--border);font-size:12.5px}
+.pair-row:first-child{border-top:0}
+.pair-nm{flex:1;line-height:1.45;min-width:0}
+.pair-val{font-weight:700;font-size:15px;flex-shrink:0}
+.ov-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:5px}
+.ov-bar i{display:block;height:100%;border-radius:3px}
+.ov-empty{text-align:center;padding:38px 18px;color:var(--text2);font-size:13.5px;line-height:1.65}
+.ov-empty div:first-child{font-size:34px;margin-bottom:11px}
+@media(max-width:640px){
+.ov-pct{font-size:37px}
+.ov-chip span{max-width:150px}
+.ov-tbl{font-size:11.5px}
+.ov-tbl th,.ov-tbl td{padding:8px 9px}
+.ov-hero{padding:19px 15px}
+}
+</style></head><body><div class="header"><div class="hlogo">&#128200;</div><div><div class="htitle">India Fund Tracker</div><div class="hsub">602 funds &middot; 2026-06-01 15:25</div></div><button class="refresh-btn" onclick="triggerRefresh()">&#8635; Refresh Data</button><div class="hbadge">&#128202; 602 Funds</div></div><div class="tabs"><div class="tab active" onclick="switchTab('top10')">&#127942; Top 10 Funds</div><div class="tab" onclick="switchTab('search')">&#128269; Search Funds</div><div class="tab" onclick="switchTab('managers')">&#128100; Fund Managers</div><div class="tab" onclick="switchTab('overlap')">&#128279; Overlap</div></div><div class="content"><div class="section active" id="s0"><div class="sh"><h2>Top 10 Performing Funds</h2><p>Best funds per category &mdash; ranked by composite score, 1Y return, Sharpe vs category avg, and manager track record.</p><span class="sh-note">Only funds above category average in both 1Y return AND Sharpe qualify</span></div><div class="sort-row"><span class="sort-lbl">Sort by:</span><button class="sort-btn active" onclick="sortByPeriod('score',this)">&#127942; Score</button><button class="sort-btn" onclick="sortByPeriod('r1m',this)">1 Month</button><button class="sort-btn" onclick="sortByPeriod('r6m',this)">6 Months</button><button class="sort-btn" onclick="sortByPeriod('r1y',this)">1 Year</button><button class="sort-btn" onclick="sortByPeriod('r3y',this)">3 Years</button></div><div class="filters"><button class="filter-btn active" onclick="filterTop('all',this)">All</button><button class="filter-btn" onclick="filterTop('Small Cap',this)">Small Cap</button><button class="filter-btn" onclick="filterTop('Mid Cap',this)">Mid Cap</button><button class="filter-btn" onclick="filterTop('Large Cap',this)">Large Cap</button><button class="filter-btn" onclick="filterTop('Flexi Cap',this)">Flexi Cap</button><button class="filter-btn" onclick="filterTop('Index',this)">Index</button><button class="filter-btn" onclick="filterTop('Sectoral/Thematic',this)">Sectoral</button></div><div class="card" id="top10-list"></div></div><div class="section" id="s1"><div class="sh"><h2>Search Mutual Funds</h2><p>Wildcard search across 602 funds.</p></div><div class="search-wrap"><input class="search-input" id="search-input" type="text" placeholder="e.g. SBI small cap, Axis mid, Parag Parikh, ICICI tech..." oninput="doSearch(this.value)"><span class="si">&#128269;</span></div><div id="srch-res"></div><div id="srch-det"></div><div id="srch-ph" class="empty-state"><div style="font-size:36px;margin-bottom:10px">&#128270;</div>Search 602 Indian mutual funds</div></div><div class="section" id="s2"><div class="sh"><h2>Top Fund Managers</h2><p>Click any manager to see tracked funds and performance.</p></div><div class="manager-grid" id="mgr-grid"></div></div><div class="section" id="s3"><div class="sh"><h2>Portfolio Overlap</h2><p>Pick 2&ndash;4 funds from the same category to see how much of their portfolios are the same stocks.</p><span class="sh-note">Holdings are disclosed monthly &mdash; expect a 10&ndash;40 day lag</span></div>
+<div class="ov-picker"><div class="search-wrap"><input class="search-input" id="ov-inp" placeholder="Search funds to compare..." oninput="ovSearch(this.value)" autocomplete="off"><span class="search-ic">&#128269;</span></div><div id="ov-res"></div></div>
+<div id="ov-chips" class="ov-chips"></div>
+<div id="ov-action"></div>
+<div id="ov-out"></div></div></div><script>
 
 var FUND_LIST=[], FUND_NAV={}, BENCHMARK=null, DATA_DATE='';
 var _dataLoaded=false;
@@ -271,7 +328,251 @@ function toggleMgr(i){
     _charts[cid]=new Chart(el,{type:'line',data:{labels:labels,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:14,padding:8}}},scales:{x:{ticks:{maxTicksLimit:5,font:{size:9},color:'#94a3b8'},grid:{color:'rgba(0,0,0,.03)'}},y:{ticks:{font:{size:9},color:'#94a3b8'},grid:{color:'rgba(0,0,0,.03)'}}}}});
   },60);
 }
-function switchTab(tab){['top10','search','managers'].forEach(function(t,i){document.querySelectorAll('.tab')[i].classList.toggle('active',t===tab);document.querySelectorAll('.section')[i].classList.toggle('active',t===tab);});}
+function switchTab(tab){['top10','search','managers','overlap'].forEach(function(t,i){var tb=document.querySelectorAll('.tab')[i],sc=document.querySelectorAll('.section')[i];if(tb)tb.classList.toggle('active',t===tab);if(sc)sc.classList.toggle('active',t===tab);});}
+/* ============================ PORTFOLIO OVERLAP ============================ */
+var OV_SEL=[], OV_CACHE={}, OV_BASE='https://mfdata.in/api/v1';
+
+/* The API response shape is unverified, so pull fields by trying the
+   conventional names rather than assuming one. */
+function ovPick(o,keys){for(var i=0;i<keys.length;i++){var k=keys[i];if(o[k]!=null&&o[k]!=='')return o[k];}return null;}
+
+function ovNormalise(raw){
+  /* Find the holdings array wherever it lives in the payload. */
+  var arr=null;
+  if(Array.isArray(raw))arr=raw;
+  else if(raw&&typeof raw==='object'){
+    var cand=['holdings','data','portfolio','result','results','equity','securities','items'];
+    for(var i=0;i<cand.length;i++){
+      var v=raw[cand[i]];
+      if(Array.isArray(v)){arr=v;break;}
+      if(v&&typeof v==='object'){
+        for(var j=0;j<cand.length;j++){if(Array.isArray(v[cand[j]])){arr=v[cand[j]];break;}}
+        if(arr)break;
+      }
+    }
+  }
+  if(!arr||!arr.length)return null;
+  var out=[];
+  for(var k=0;k<arr.length;k++){
+    var h=arr[k]; if(!h||typeof h!=='object')continue;
+    var nm=ovPick(h,['company_name','companyName','stock_name','stockName','name','security_name','securityName','instrument','company','scrip','security']);
+    var wt=ovPick(h,['percentage_of_holding','percentage','pct','weight','weightage','holding_percentage','holdingPercentage','allocation','corpus_percentage','percent_of_aum','pct_of_aum']);
+    var sec=ovPick(h,['sector','industry','sector_name','sectorName','industry_name']);
+    if(nm==null)continue;
+    var w=parseFloat(wt);
+    if(isNaN(w))continue;
+    out.push({name:String(nm).trim(),weight:w,sector:sec?String(sec).trim():'Unclassified'});
+  }
+  if(!out.length)return null;
+  /* Some feeds give fractions (0.043) rather than percents (4.3). */
+  var total=out.reduce(function(a,b){return a+b.weight;},0);
+  if(total>0&&total<=1.5)out.forEach(function(h){h.weight*=100;});
+  return out;
+}
+
+/* Normalise company names so "HDFC Bank Ltd." and "HDFC Bank Limited" match. */
+function ovKey(n){
+  return n.toLowerCase()
+    .replace(/\(.*?\)/g,' ')
+    .replace(/\b(ltd|limited|ltd\.|inc|corp|corporation|co|company|pvt|private|plc|the)\b/g,' ')
+    .replace(/[^a-z0-9]+/g,'')
+    .trim();
+}
+
+async function ovFetchHoldings(code){
+  if(OV_CACHE[code])return OV_CACHE[code];
+  var paths=['/schemes/'+code+'/holdings','/schemes/'+code+'/portfolio','/holdings/'+code,'/schemes/'+code];
+  var lastErr=null,lastBody=null;
+  for(var i=0;i<paths.length;i++){
+    try{
+      var r=await fetch(OV_BASE+paths[i]);
+      if(!r.ok){lastErr='HTTP '+r.status+' on '+paths[i];continue;}
+      var txt=await r.text();
+      var j; try{j=JSON.parse(txt);}catch(e){lastErr='Non-JSON response from '+paths[i];lastBody=txt.slice(0,600);continue;}
+      var norm=ovNormalise(j);
+      if(norm){OV_CACHE[code]=norm;return norm;}
+      lastErr='Reached '+paths[i]+' but found no holdings array in the response';
+      lastBody=JSON.stringify(j,null,1).slice(0,900);
+    }catch(e){lastErr='Network/CORS error on '+paths[i]+': '+e.message;}
+  }
+  var err=new Error(lastErr||'Could not load holdings');
+  err.body=lastBody; throw err;
+}
+
+function ovSearch(val){
+  var rw=document.getElementById('ov-res');
+  if(!val||val.length<2){rw.innerHTML='';return;}
+  var toks=val.toLowerCase().split(' ').filter(function(t){return t;});
+  var chosen=OV_SEL.map(function(f){return f.schemeCode;});
+  var pool=FUND_LIST;
+  if(OV_SEL.length){var cat=OV_SEL[0].label;pool=pool.filter(function(f){return f.label===cat;});}
+  var hits=pool.filter(function(f){
+    if(chosen.indexOf(f.schemeCode)>=0)return false;
+    var n=(f.name||'').toLowerCase();
+    return toks.every(function(t){return n.indexOf(t)>=0;});
+  }).slice(0,25);
+  if(!hits.length){
+    var msg=OV_SEL.length?'No more '+OV_SEL[0].label+' funds match. Overlap only makes sense within one category.':'No results.';
+    rw.innerHTML='<div class="search-results"><div style="padding:12px 14px;color:var(--text2);font-size:13px">'+msg+'</div></div>';return;
+  }
+  rw.innerHTML='<div class="search-results">'+hits.map(function(f){
+    return '<div class="search-item" onclick="ovAdd('+f.schemeCode+')"><div class="fund-name">'+f.name+'</div><div class="fund-meta"><span class="badge '+(f.type||'equity')+'">'+f.label+'</span> '+(f.house||'')+'</div></div>';
+  }).join('')+'</div>';
+}
+
+function ovAdd(code){
+  if(OV_SEL.length>=4){alert('You can compare up to 4 funds at a time.');return;}
+  var f=FUND_LIST.filter(function(x){return x.schemeCode===code;})[0];
+  if(!f)return;
+  OV_SEL.push(f);
+  document.getElementById('ov-inp').value='';
+  document.getElementById('ov-res').innerHTML='';
+  ovRenderChips();
+}
+
+function ovRemove(code){
+  OV_SEL=OV_SEL.filter(function(f){return f.schemeCode!==code;});
+  ovRenderChips();
+  document.getElementById('ov-out').innerHTML='';
+}
+
+function ovRenderChips(){
+  var cw=document.getElementById('ov-chips'),aw=document.getElementById('ov-action');
+  cw.innerHTML=OV_SEL.map(function(f){
+    return '<div class="ov-chip"><span>'+f.name+'</span><button onclick="ovRemove('+f.schemeCode+')" title="Remove">&times;</button></div>';
+  }).join('');
+  var mixed=OV_SEL.length>1&&OV_SEL.some(function(f){return f.label!==OV_SEL[0].label;});
+  var warn=mixed?'<div class="ov-warn"><b>Mixed categories.</b> Overlap between different categories is expected to be low and is not a meaningful comparison. Compare funds within one category.</div>':'';
+  if(OV_SEL.length<2){
+    aw.innerHTML=warn+'<button class="ov-go" disabled>Select at least 2 funds</button>';
+  }else{
+    aw.innerHTML=warn+'<button class="ov-go" onclick="ovRun()">Compare '+OV_SEL.length+' funds</button>';
+  }
+  if(!OV_SEL.length)document.getElementById('ov-out').innerHTML='';
+}
+
+/* Standard portfolio-overlap measure: sum of the smaller weight
+   across every stock both funds hold. */
+function ovPairScore(a,b){
+  var mapB={};b.forEach(function(h){mapB[ovKey(h.name)]=(mapB[ovKey(h.name)]||0)+h.weight;});
+  var mapA={};a.forEach(function(h){mapA[ovKey(h.name)]=(mapA[ovKey(h.name)]||0)+h.weight;});
+  var score=0,shared=[];
+  Object.keys(mapA).forEach(function(k){
+    if(mapB[k]!=null){
+      var m=Math.min(mapA[k],mapB[k]);
+      score+=m;
+      shared.push(k);
+    }
+  });
+  return {score:Math.round(score*10)/10,shared:shared.length};
+}
+
+function ovSectorMap(hs){
+  var m={};hs.forEach(function(h){m[h.sector]=(m[h.sector]||0)+h.weight;});return m;
+}
+
+function ovVerdict(p,n){
+  if(p>=70)return '<b>Very high overlap.</b> These '+n+' funds are close to the same portfolio. Holding all of them gives you concentration, not diversification &mdash; you are likely paying multiple expense ratios for one bet.';
+  if(p>=50)return '<b>High overlap.</b> Most of the money is in the same stocks. There is a case for keeping one and redirecting the rest elsewhere, though the funds may still differ in how they weight those stocks.';
+  if(p>=30)return '<b>Moderate overlap.</b> Common ground in the large positions, but each fund brings its own picks too. Fairly typical for two funds in the same category.';
+  if(p>=15)return '<b>Low overlap.</b> These funds are running noticeably different portfolios. Holding both adds real breadth within the category.';
+  return '<b>Very low overlap.</b> Almost entirely different stocks. Unusual within a single category &mdash; worth checking that both funds actually follow the mandate you expect.';
+}
+
+async function ovRun(){
+  var out=document.getElementById('ov-out');
+  out.innerHTML='<div style="padding:30px;text-align:center"><div class="spinner"></div><div style="color:var(--text2);font-size:13.5px;margin-top:12px">Loading holdings...</div></div>';
+  var hold=[];
+  for(var i=0;i<OV_SEL.length;i++){
+    try{hold.push(await ovFetchHoldings(OV_SEL[i].schemeCode));}
+    catch(e){
+      out.innerHTML='<div class="ov-err"><b>Could not load holdings for '+OV_SEL[i].name+'</b><br><br>'
+        +e.message+'<br><br>The overlap feature depends on <code>mfdata.in</code>, which is a different service from the one supplying your NAV data. NAV and returns are unaffected.'
+        +(e.body?'<pre>'+e.body.replace(/</g,'&lt;')+'</pre>':'')+'</div>';
+      return;
+    }
+  }
+
+  var html='';
+
+  /* Headline number */
+  var pairs=[];
+  for(var a=0;a<hold.length;a++)for(var b=a+1;b<hold.length;b++){
+    var r=ovPairScore(hold[a],hold[b]);
+    pairs.push({a:OV_SEL[a],b:OV_SEL[b],score:r.score,shared:r.shared});
+  }
+  var avg=Math.round(pairs.reduce(function(x,y){return x+y.score;},0)/pairs.length*10)/10;
+  html+='<div class="ov-hero"><div class="ov-pct">'+avg+'%</div><div class="ov-pct-lbl">'
+      +(pairs.length>1?'Average overlap across '+pairs.length+' pairs':'Portfolio overlap')
+      +'</div><div class="ov-verdict">'+ovVerdict(avg,OV_SEL.length)+'</div></div>';
+
+  /* Pairwise breakdown when >2 funds */
+  if(pairs.length>1){
+    html+='<div class="ov-card"><div class="ov-hd">Pair by pair</div>'+pairs.map(function(p){
+      var col=p.score>=60?'var(--red)':p.score>=35?'var(--gold)':'var(--green)';
+      return '<div class="pair-row"><div class="pair-nm">'+p.a.name+'<br><span style="color:var(--text3)">vs</span> '+p.b.name
+        +'<div class="ov-bar"><i style="width:'+Math.min(p.score,100)+'%;background:'+col+'"></i></div></div>'
+        +'<div class="pair-val" style="color:'+col+'">'+p.score+'%</div></div>';
+    }).join('')+'<div class="ov-mini">Each figure is the share of portfolio value invested in the same stocks by both funds.</div></div>';
+  }
+
+  /* Shared stock table */
+  var maps=hold.map(function(h){var m={};h.forEach(function(x){var k=ovKey(x.name);if(!m[k])m[k]={name:x.name,weight:0,sector:x.sector};m[k].weight+=x.weight;});return m;});
+  var common=Object.keys(maps[0]).filter(function(k){return maps.every(function(m){return m[k]!=null;});});
+  common.sort(function(x,y){
+    var sx=maps.reduce(function(a,m){return a+m[x].weight;},0);
+    var sy=maps.reduce(function(a,m){return a+m[y].weight;},0);
+    return sy-sx;
+  });
+
+  if(common.length){
+    html+='<div class="ov-card"><div class="ov-hd"><span>Stocks held by all '+OV_SEL.length+'</span><small>'+common.length+' stocks</small></div><div class="ov-scroll"><table class="ov-tbl"><thead><tr><th>Stock</th>'
+      +OV_SEL.map(function(f,i){return '<th>F'+(i+1)+'</th>';}).join('')+'<th>Min</th></tr></thead><tbody>'
+      +common.slice(0,40).map(function(k){
+        var ws=maps.map(function(m){return m[k].weight;});
+        var mn=Math.min.apply(null,ws);
+        return '<tr><td>'+maps[0][k].name+'</td>'+ws.map(function(w){return '<td>'+w.toFixed(2)+'%</td>';}).join('')
+          +'<td style="font-weight:700;color:var(--primary)">'+mn.toFixed(2)+'%</td></tr>';
+      }).join('')
+      +'</tbody></table></div><div class="ov-mini">'
+      +OV_SEL.map(function(f,i){return '<b>F'+(i+1)+'</b> = '+f.name;}).join('<br>')
+      +(common.length>40?'<br><br>Showing the 40 largest of '+common.length+' shared holdings.':'')
+      +'</div></div>';
+  }else{
+    html+='<div class="ov-card"><div class="ov-hd">Stocks held by all</div><div class="ov-empty"><div>&#128260;</div>No single stock appears in every one of these funds.</div></div>';
+  }
+
+  /* Sector overlap */
+  var secMaps=hold.map(ovSectorMap);
+  var allSecs={};secMaps.forEach(function(m){Object.keys(m).forEach(function(k){allSecs[k]=1;});});
+  var secList=Object.keys(allSecs).sort(function(x,y){
+    var sx=secMaps.reduce(function(a,m){return a+(m[x]||0);},0);
+    var sy=secMaps.reduce(function(a,m){return a+(m[y]||0);},0);
+    return sy-sx;
+  });
+  var secOverlap=0;
+  secList.forEach(function(sc){secOverlap+=Math.min.apply(null,secMaps.map(function(m){return m[sc]||0;}));});
+  secOverlap=Math.round(secOverlap*10)/10;
+
+  var unclass=secList.length===1&&secList[0]==='Unclassified';
+  if(!unclass){
+    html+='<div class="ov-card"><div class="ov-hd"><span>Sector overlap</span><small>'+secOverlap+'% shared</small></div><div class="ov-scroll"><table class="ov-tbl"><thead><tr><th>Sector</th>'
+      +OV_SEL.map(function(f,i){return '<th>F'+(i+1)+'</th>';}).join('')+'<th>Min</th></tr></thead><tbody>'
+      +secList.slice(0,15).map(function(sc){
+        var ws=secMaps.map(function(m){return m[sc]||0;});
+        return '<tr><td>'+sc+'</td>'+ws.map(function(w){return '<td>'+w.toFixed(1)+'%</td>';}).join('')
+          +'<td style="font-weight:700;color:var(--primary)">'+Math.min.apply(null,ws).toFixed(1)+'%</td></tr>';
+      }).join('')
+      +'</tbody></table></div><div class="ov-mini">Sector overlap of <b>'+secOverlap+'%</b> against stock overlap of <b>'+avg+'%</b>. '
+      +(secOverlap-avg>20?'The sector figure being much higher means these funds pick different stocks but make similar sector bets &mdash; less diversification than the stock number alone suggests.':'The two figures are reasonably close, so the stock-level reading is a fair picture.')
+      +'</div></div>';
+  }
+
+  html+='<div class="ov-mini" style="background:var(--surface2);border-radius:9px;padding:12px 14px;line-height:1.6">Overlap is measured the standard way: for every stock both funds hold, take the smaller of the two weights and add them up. A 60% reading means 60 paise of every rupee is invested in identical positions. Holdings come from monthly disclosures, so they lag the market by a few weeks. This is information, not investment advice.</div>';
+
+  out.innerHTML=html;
+}
+
 renderTop10('all');renderMgrs();
 
 
