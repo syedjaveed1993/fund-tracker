@@ -1,0 +1,42 @@
+name: Refresh fund data
+
+on:
+  schedule:
+    - cron: '30 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-fund-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch latest NAV data from mfapi.in
+        run: python scripts/refresh_data.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name  "fund-tracker-bot"
+          git config user.email "actions@github.com"
+          git add fund_data.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Data refresh $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
