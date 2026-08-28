@@ -1,17 +1,19 @@
 name: Probe holdings API
 
-# Manual only - run it from the Actions tab, read the log, then delete this file.
+# Manual only - run from the Actions tab, read the log, then delete this file.
 on:
   workflow_dispatch:
 
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Probe mfdata.in
-        run: python scripts/probe_holdings.py
+      - name: Install Excel readers
+        run: pip install openpyxl xlrd
+      - name: Probe AMFI portfolio disclosures
+        run: python scripts/probe_amfi.py
