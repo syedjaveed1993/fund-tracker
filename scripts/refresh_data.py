@@ -7,7 +7,7 @@ and writes fund_data.json next to index.html.
 Run locally to test:  python scripts/refresh_data.py
 """
 
-import json, math, os, sys, time, urllib.request
+import json, math, os, sys, time, urllib.request, urllib.error
 from collections import defaultdict, Counter
 from datetime import datetime, timedelta
 
@@ -26,16 +26,35 @@ TARGET_CATEGORIES = [
 
 
 # -- HTTP ---------------------------------------------------------------------
-def fetch_json(url, retries=3):
+def fetch_json(url, retries=3, timeout=45, verbose=False):
+    """Fetch JSON. When verbose, report why it failed instead of
+    swallowing the exception - otherwise failures are undiagnosable."""
+    last = None
     for attempt in range(retries):
         try:
-            req = urllib.request.Request(
-                url, headers={"Accept": "application/json", "User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=25) as r:
+            req = urllib.request.Request(url, headers={
+                "Accept": "application/json",
+                "Accept-Encoding": "identity",
+                "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                               "AppleWebKit/537.36 (KHTML, like Gecko) "
+                               "Chrome/122.0 Safari/537.36"),
+            })
+            with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read().decode())
-        except Exception:
-            if attempt < retries - 1:
-                time.sleep(2 + attempt * 2)
+        except urllib.error.HTTPError as e:
+            last = "HTTP %s %s" % (e.code, e.reason)
+            # Rate limiting - back off hard rather than hammering
+            if e.code in (429, 503):
+                time.sleep(10 + attempt * 20)
+                continue
+        except urllib.error.URLError as e:
+            last = "URLError: %s" % e.reason
+        except Exception as e:
+            last = "%s: %s" % (type(e).__name__, e)
+        if attempt < retries - 1:
+            time.sleep(3 + attempt * 5)
+    if verbose:
+        print("    fetch failed: %s  <- %s" % (last, url))
     return None
 
 
@@ -245,15 +264,29 @@ def main():
         except Exception as e:
             print("Could not read existing data (%s) - starting fresh" % e)
 
+    # The master list is only needed to DISCOVER new funds. If it fails we can
+    # still refresh everything we already track, so don't abort the whole run.
     print("Fetching master scheme list...")
-    master = fetch_json(BASE)
-    if not master:
-        print("FATAL: mfapi.in unreachable")
-        sys.exit(1)
+    master = None
+    for host in ("https://api.mfapi.in/mf", "http://api.mfapi.in/mf"):
+        master = fetch_json(host, retries=4, timeout=90, verbose=True)
+        if master:
+            if host != BASE:
+                print("  (fell back to %s)" % host)
+            break
 
-    direct = [f for f in master if is_direct_growth(f["schemeName"])]
-    new    = [f for f in direct if f["schemeCode"] not in existing_codes]
-    print("%d direct-growth plans | %d not yet tracked" % (len(direct), len(new)))
+    if master:
+        direct = [f for f in master if is_direct_growth(f["schemeName"])]
+        new    = [f for f in direct if f["schemeCode"] not in existing_codes]
+        print("%d direct-growth plans | %d not yet tracked" % (len(direct), len(new)))
+    else:
+        new = []
+        print("WARNING: could not fetch the master list.")
+        if not existing:
+            print("FATAL: no master list and no existing data - nothing to do.")
+            sys.exit(1)
+        print("Continuing anyway: refreshing the %d funds already tracked." % len(existing))
+        print("New-fund discovery is skipped this run; it will retry tomorrow.")
 
     # --- Refresh every fund we already track with LIVE NAV data ---
     print("\nRefreshing NAV for %d tracked funds..." % len(existing))
@@ -262,7 +295,7 @@ def main():
         if i % 50 == 0:
             print("  %d/%d" % (i, len(existing)))
         code = f.get("schemeCode")
-        data = fetch_json("%s/%s" % (BASE, code)) if code else None
+        data = fetch_json("%s/%s" % (BASE, code), verbose=(failed < 5)) if code else None
         if not data or not data.get("data"):
             failed += 1
             refreshed.append(f)          # keep the stale record rather than dropping it
@@ -271,6 +304,10 @@ def main():
         refreshed.append(build_record(code, f.get("name", ""), data.get("meta", {}), data["data"]))
         time.sleep(PAUSE)
     print("  Refreshed %d, %d kept stale (API errors)" % (len(refreshed) - failed, failed))
+    if existing and failed == len(existing):
+        print("FATAL: every single fetch failed - mfapi.in is unreachable from this runner.")
+        print("Leaving fund_data.json untouched rather than rewriting it with stale values.")
+        sys.exit(1)
 
     # --- Discover newly launched funds in our target categories ---
     print("\nChecking %d new schemes..." % len(new))
